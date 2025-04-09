@@ -1,0 +1,32 @@
+[
+    {
+        "category": "Electronics (Phones)",
+        "columns": 4,
+        "products": [
+            {
+                "brand": "Brand X",
+                "reason": "Funds Israeli settlements",
+                "alternatives": ["FairPhone", "Shiftphone"],
+                "source": "https://example.com/report1"
+            },
+            {
+                "brand": "Brand Y",
+                "reason": "Military contracts",
+                "alternatives": ["Teracube", "Samsung Galaxy"],
+                "source": "https://example.com/report2"
+            }
+        ]
+    },
+    {
+        "category": "Software",
+        "columns": 8,
+        "products": [
+            {
+                "brand": "Company Z",
+                "reason": "Surveillance tech used in occupied territories",
+                "alternatives": ["ProtonMail", "Signal"],
+                "source": "https://example.com/report3"
+            }
+        ]
+    }
+]
