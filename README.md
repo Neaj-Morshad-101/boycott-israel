@@ -1,104 +1,29 @@
-# Boycott Israel Website
+# Create T3 App
 
-This repository contains the source code and data for the "Boycott Israel" website, designed to inform users about products and services to boycott and suggest ethical alternatives.
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-Boycott Brands/Products/Services   
-https://boycott-israel.org/   
-https://www.ipsc.ie/campaigns/consumer-boycott   
-https://bdsmovement.net/Guide-to-BDS-Boycott   
+## What's next? How do I make an app with this?
 
-## Table of Contents
+We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
 
-- [Project Structure](#project-structure)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Data Management](#data-management)
-- [Hosting](#hosting)
-- [Contributing](#contributing)
-- [License](#license)
+If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-## Project Structure
+- [Next.js](https://nextjs.org)
+- [NextAuth.js](https://next-auth.js.org)
+- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team)
+- [Tailwind CSS](https://tailwindcss.com)
+- [tRPC](https://trpc.io)
 
-- **index.html**: Main page displaying the boycott list and search functionality.
-- **why-boycott.html**: Page explaining the reasons and motivations behind the boycott.
-- **about-us.html**: Information about the creators and mission of the website.
-- **assets/**: Contains stylesheets, JavaScript files, and data.
-  - **css/style.css**: Main stylesheet for the website.
-  - **js/script.js**: JavaScript functionalities.
-  - **data/boycott-data.json**: JSON file containing boycott data.
-- **images/**: Directory for images and videos used on the site.
-- **ads/**: (Optional) Directory for advertisements.
+## Learn More
 
-## Features
+To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
 
-- **Navigation Links**: Easy access to "Boycott Israel" (Main Page), "Why Boycott", and "About Us".
-- **Search Functionality**: Allows users to search for specific brands, products, or services to boycott and find ethical alternatives.
-- **Boycott List**: A comprehensive, category-wise list of products with suggested alternatives. The List can be Downloaded to PDF format. 
-- **Download Option**: Users can download the list of 100 products to boycott along with their alternatives.
+- [Documentation](https://create.t3.gg/)
+- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
-Main Page contains Title, Motto with Images, Videos, Ads, etc. 
+You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
 
-## Technologies Used
+## How do I deploy this?
 
-- **Frontend**:
-  - HTML
-  - CSS (BootStap 5 or Tailwind CSS for responsive design)
-  - JavaScript
-  - React.js for dynamic UI components
-- **Backend**:
-  - Node.js
-  - Firebase for real-time data storage and authentication
-
-## Data Management
-
-The boycott data is stored in a JSON file located at `assets/data/boycott-data.json`. This structure allows for easy updates and integration with the frontend.
-
-**Example Structure**:
-
-```json
-[
-  {
-    "category": "Beverages",
-    "products": [
-      {
-        "name": "Coca-Cola",
-        "alternative": "Cola Gaza"
-      },
-      {
-        "name": "Pepsi",
-        "alternative": "Mecca Cola"
-      }
-    ]
-  },
-  {
-    "category": "Cosmetics",
-    "products": [
-      {
-        "name": "Ahava",
-        "alternative": "Lush"
-      }
-    ]
-  }
-]
-```
-
-### Tools & Libraries: 
-Bootstrap 5: Prebuilt responsive components (getbootstrap.com).   
-PapaParse: JSON-to-CSV conversion (papaparse.com).   
-Netlify: Free hosting + continuous deployment (netlify.com).   
-Google Sheets: Manage boycott data in a spreadsheet, then export to JSON (easier than manual editing).   
-
-### Data sourced from: 
-Ethical Consumer, Boycott Israeli Consumer Goods Dataset, etc.
-
-## Hosting:    
-The website can be hosted on:   
-Netlify: Free, fast, and easy for static sites with continuous deployment.   
-Vercel: Ideal for React-based sites with serverless functions support.   
-GitHub Pages: Suitable for hosting static websites directly from the repository.   
-
-## Contributing
-We welcome contributions to enhance the website's functionality and data accuracy. Please fork the repository and submit a pull request with your changes.
-
-## License   
-This project is licensed under the MIT License.
+Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
