@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -116,10 +117,67 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+	* {
+		@apply border-border outline-ring/50;
 	}
-  body {
-    @apply bg-background text-foreground;
+	body {
+		@apply bg-background text-foreground;
 	}
+}
+
+/* Modern grid pattern for hero section */
+.bg-grid-pattern {
+	background-size: 40px 40px;
+	background-image: linear-gradient(
+			to right,
+			rgba(0, 0, 0, 0.05) 1px,
+			transparent 1px
+		), linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+.dark .bg-grid-pattern {
+	background-image: linear-gradient(
+			to right,
+			rgba(255, 255, 255, 0.05) 1px,
+			transparent 1px
+		),
+		linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Animation classes for hover effects */
+.hover-lift {
+	transition: transform 0.3s ease-in-out;
+}
+
+.hover-lift:hover {
+	transform: translateY(-4px);
+}
+
+/* Card glow effect */
+.card-glow {
+	position: relative;
+}
+
+.card-glow::before {
+	content: "";
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: linear-gradient(
+		to bottom right,
+		var(--primary) 0%,
+		transparent 40%,
+		transparent 60%,
+		var(--primary) 100%
+	);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.4s ease;
+}
+
+.card-glow:hover::before {
+	opacity: 1;
 }
