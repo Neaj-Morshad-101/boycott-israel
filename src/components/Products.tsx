@@ -1,134 +1,215 @@
 "use client";
 
-import { Menu } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useState } from "react";
-import { ProductPair } from "~/components/ProductCard";
-import { MobileSidebar, Sidebar } from "~/components/Sidebar";
+import { Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { ProductSection } from "~/components/ProductCard";
 import { Button } from "~/components/ui/button";
-import { CATEGORIZED_PRODUCT_PAIRS } from "~/lib/data";
+import { Input } from "~/components/ui/input";
+import { type IProductSection, PRODUCT_SECTIONS } from "~/lib/data";
 
-export default function Products() {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
-	const [category] = useQueryState("category");
+function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
+	const searchParams = useSearchParams();
+	const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
 
-	// Check if the current category has any products
-	const hasProducts =
-		!category ||
-		(category &&
-			category in CATEGORIZED_PRODUCT_PAIRS &&
-			CATEGORIZED_PRODUCT_PAIRS[
-				category as keyof typeof CATEGORIZED_PRODUCT_PAIRS
-			]?.length > 0);
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		onSearch(searchInput);
+	};
 
 	return (
-		<section className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-16 md:py-24">
-			<div className="container mx-auto px-4 md:px-0">
-				<div className="mb-8 flex items-center justify-between md:mb-12">
-					<div>
-						<h2 className="mb-2 text-[#E4312b] text-xs uppercase tracking-widest">
-							Boycott For Change
-						</h2>
-						<h3 className="font-bold text-3xl">All Products</h3>
-					</div>
-					<div className="md:hidden">
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={() => setSidebarOpen(true)}
-							className="h-10 w-10 rounded-full border-[#009736]/30"
-						>
-							<Menu className="h-5 w-5" />
-							<span className="sr-only">Toggle menu</span>
-						</Button>
-					</div>
-				</div>
+		<div className="sticky top-16 z-10 bg-background/95 py-4 backdrop-blur-sm">
+			<form onSubmit={handleSubmit} className="relative">
+				<Input
+					type="search"
+					value={searchInput}
+					onChange={(e) => setSearchInput(e.target.value)}
+					placeholder="Search products..."
+					className="w-full rounded-full pr-10"
+				/>
+				<Button
+					type="submit"
+					size="icon"
+					variant="ghost"
+					className="-translate-y-1/2 absolute top-1/2 right-2"
+				>
+					<Search className="h-4 w-4" />
+					<span className="sr-only">Search</span>
+				</Button>
+			</form>
+		</div>
+	);
+}
 
-				<div className="grid grid-cols-1 gap-8 md:grid-cols-[240px_1fr]">
-					<div className="sticky top-20 hidden h-fit self-start md:block">
-						<div className="max-h-[calc(100vh-8rem)] overflow-y-auto overflow-x-hidden rounded-xl border border-muted shadow-sm">
-							<Sidebar />
-						</div>
+export default function Products() {
+	const searchParams = useSearchParams();
+	const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+	const [category, setCategory] = useState(searchParams.get("category") || "");
+	const [filteredSections, setFilteredSections] = useState<IProductSection[]>(
+		[],
+	);
+
+	// Handle search function
+	const handleSearch = (query: string) => {
+		setSearchQuery(query);
+		// Update URL without page reload
+		const url = new URL(window.location.href);
+		if (query) {
+			url.searchParams.set("q", query);
+		} else {
+			url.searchParams.delete("q");
+		}
+		window.history.pushState({}, "", url);
+	};
+
+	// Clear all filters
+	const clearFilters = () => {
+		setSearchQuery("");
+		setCategory("");
+		const url = new URL(window.location.href);
+		url.searchParams.delete("q");
+		url.searchParams.delete("category");
+		window.history.pushState({}, "", url);
+	};
+
+	// Update local state when URL params change
+	useEffect(() => {
+		setCategory(searchParams.get("category") || "");
+		setSearchQuery(searchParams.get("q") || "");
+	}, [searchParams]);
+
+	// Filter product sections based on search query and category
+	useEffect(() => {
+		// Start with all product sections
+		let sections = [...PRODUCT_SECTIONS];
+
+		// Filter by category if selected
+		if (category) {
+			sections = sections.filter((section) => section.category === category);
+		}
+
+		// Filter by search query if provided
+		if (searchQuery) {
+			const lowercaseQuery = searchQuery.toLowerCase();
+
+			// Apply the filter to each section
+			sections = sections.map((section) => {
+				// Filter boycott products
+				const filteredBoycottProducts = section.boycottProducts.filter(
+					(product) =>
+						product.name.toLowerCase().includes(lowercaseQuery) ||
+						product.company.toLowerCase().includes(lowercaseQuery),
+				);
+
+				// Filter alternative products
+				const filteredAlternativeProducts = section.alternativeProducts.filter(
+					(product) =>
+						product.name.toLowerCase().includes(lowercaseQuery) ||
+						product.company.toLowerCase().includes(lowercaseQuery),
+				);
+
+				// Create a new section with filtered products
+				return {
+					category: section.category,
+					boycottProducts: filteredBoycottProducts,
+					alternativeProducts: filteredAlternativeProducts,
+				};
+			});
+
+			// Only keep sections that have at least one product in either category
+			sections = sections.filter(
+				(section) =>
+					section.boycottProducts.length > 0 ||
+					section.alternativeProducts.length > 0,
+			);
+		}
+
+		setFilteredSections(sections);
+	}, [searchQuery, category]);
+
+	// Check if we have any products to display
+	const hasProducts = filteredSections.length > 0;
+
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<section className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-6 md:py-12">
+				<div className="container mx-auto px-4 md:px-0">
+					{/* Sticky Search Bar (only for mobile - desktop has search in navbar) */}
+					<div className="">
+						<SearchBar onSearch={handleSearch} />
 					</div>
 
-					<MobileSidebar
-						isOpen={sidebarOpen}
-						onClose={() => setSidebarOpen(false)}
-					/>
-
-					<div className="space-y-16">
-						{category
-							? Object.entries(CATEGORIZED_PRODUCT_PAIRS)
-									.filter(([cat]) => cat === category)
-									.map(([cat, pairs]) => (
-										<div key={cat} id={cat} className="scroll-mt-20">
-											<div className="mb-8 flex items-center gap-3">
-												<div className="h-[1px] w-6 bg-[#009736]" />
-												<h2 className="font-bold text-2xl capitalize">{cat}</h2>
-											</div>
-											{pairs.length > 0 ? (
-												<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 xl:grid-cols-3">
-													{pairs.map((pair, index) => (
-														<div
-															key={index}
-															className="group transition-all duration-300 hover:translate-y-[-4px]"
-														>
-															<ProductPair
-																key={index}
-																boycottProduct={pair.boycottProduct}
-																alternativeProduct={pair.alternativeProduct}
-															/>
-														</div>
-													))}
-												</div>
-											) : (
-												<div className="flex flex-col items-center justify-center py-16 text-center">
-													<p className="mb-2 font-medium text-xl">
-														No products found
-													</p>
-													<p className="text-muted-foreground">
-														There are no products available in this category.
-													</p>
-												</div>
+					{/* Search Status and Filters */}
+					{(searchQuery || category) && (
+						<div className="mt-4 mb-6 flex items-center justify-between">
+							<div>
+								<p className="text-sm">
+									{searchQuery ? (
+										<span>
+											Results for "<strong>{searchQuery}</strong>"
+											{category && (
+												<span>
+													{" "}
+													in <strong className="capitalize">{category}</strong>
+												</span>
 											)}
-										</div>
-									))
-							: Object.entries(CATEGORIZED_PRODUCT_PAIRS).map(
-									([cat, pairs]) => (
-										<div key={cat} id={cat} className="scroll-mt-20">
-											<div className="mb-8 flex items-center gap-3">
-												<div className="h-[1px] w-6 bg-[#009736]" />
-												<h2 className="font-bold text-2xl capitalize">{cat}</h2>
-											</div>
-											<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 xl:grid-cols-3">
-												{pairs.map((pair, index) => (
-													<div
-														key={index}
-														className="group transition-all duration-300 hover:translate-y-[-4px]"
-													>
-														<ProductPair
-															key={index}
-															boycottProduct={pair.boycottProduct}
-															alternativeProduct={pair.alternativeProduct}
-														/>
-													</div>
-												))}
-											</div>
-										</div>
-									),
-								)}
+										</span>
+									) : category ? (
+										<span>
+											Showing <strong className="capitalize">{category}</strong>
+										</span>
+									) : null}
+								</p>
+							</div>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={clearFilters}
+								className="text-xs"
+							>
+								Clear filters
+							</Button>
+						</div>
+					)}
 
-						{category && !hasProducts && (
+					<div className="mt-4 mb-6 space-y-6">
+						{hasProducts ? (
+							<>
+								{/* Display filtered sections */}
+								{filteredSections.map((section) => (
+									<div
+										key={section.category}
+										id={section.category}
+										className="scroll-mt-20"
+									>
+										<div className="grid grid-cols-1 gap-6">
+											<ProductSection
+												category={section.category}
+												boycottProducts={section.boycottProducts}
+												alternativeProducts={section.alternativeProducts}
+											/>
+										</div>
+									</div>
+								))}
+							</>
+						) : (
 							<div className="flex flex-col items-center justify-center py-16 text-center">
 								<p className="mb-2 font-medium text-xl">No products found</p>
 								<p className="text-muted-foreground">
-									There are no products available in the "{category}" category.
+									Try searching for a different product name or category.
 								</p>
+								<Button
+									variant="outline"
+									className="mt-4"
+									onClick={clearFilters}
+								>
+									Clear filters
+								</Button>
 							</div>
 						)}
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</Suspense>
 	);
 }

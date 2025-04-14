@@ -2,45 +2,36 @@
 
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { cn } from "~/lib/utils";
+import { CATEGORIES } from "~/lib/data";
 import Logo from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
-// Create a separate component that uses useQueryState
-function SearchForm() {
-	const [searchInput, setSearchInput] = useState("");
+// Search form component
+function SearchForm({ onSearch }: { onSearch?: (query: string) => void }) {
 	const searchParams = useSearchParams();
+	const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
 	const router = useRouter();
 
-	// Get the search query from URL parameters
-	useEffect(() => {
-		const query = searchParams.get("q");
-		if (query) {
-			setSearchInput(query);
-		}
-	}, [searchParams]);
-
-	const handleSearch = (e: React.FormEvent) => {
+	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		const trimmedInput = searchInput.trim();
 
-		if (trimmedInput) {
-			// Navigate to search page with query parameter
-			router.push(`/search?q=${encodeURIComponent(trimmedInput)}`);
+		if (onSearch) {
+			onSearch(trimmedInput);
 		} else {
-			// If search is empty and we're on search page, go home
-			if (window.location.pathname.includes("/search")) {
-				router.push("/");
+			// Default behavior if no onSearch provided
+			if (trimmedInput) {
+				router.push(`/?q=${encodeURIComponent(trimmedInput)}`);
 			}
 		}
 	};
 
 	return (
-		<form className="relative w-full" onSubmit={handleSearch}>
+		<form className="relative w-full" onSubmit={handleSubmit}>
 			<Input
 				type="search"
 				placeholder="Search products..."
@@ -61,104 +52,152 @@ function SearchForm() {
 
 export function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const searchParams = useSearchParams();
+	const [activeCategory, setActiveCategory] = useState(
+		searchParams.get("category") || "",
+	);
+	const router = useRouter();
+	const pathname = usePathname();
+
+	// Update active category when URL changes
+	useEffect(() => {
+		setActiveCategory(searchParams.get("category") || "");
+	}, [searchParams]);
+
+	// Handle category selection
+	const handleCategoryChange = (newCategory: string) => {
+		const currentCategory = searchParams.get("category");
+		const isActive = currentCategory === newCategory;
+
+		// Toggle category or set new one
+		const url = new URL(window.location.href);
+		if (isActive) {
+			url.searchParams.delete("category");
+			setActiveCategory("");
+		} else {
+			url.searchParams.set("category", newCategory);
+			setActiveCategory(newCategory);
+		}
+
+		router.push(url.toString().replace(window.location.origin, ""));
+
+		// Close mobile menu after selection
+		setIsMenuOpen(false);
+	};
+
+	// Handle search submission
+	const handleSearch = (query: string) => {
+		const url = new URL(window.location.href);
+		if (query) {
+			url.searchParams.set("q", query);
+		} else {
+			url.searchParams.delete("q");
+		}
+		router.push(url.toString().replace(window.location.origin, ""));
+	};
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b bg-background/10 backdrop-blur">
+		<header className="sticky top-0 z-50 w-full border-b bg-background/50 backdrop-blur">
 			<div className="container mx-auto flex h-16 items-center px-4 md:px-0">
 				<div className="flex w-full justify-between gap-2 md:gap-10">
-					<Logo />
-
-					<div className="mx-auto hidden max-w-xl flex-1 items-center justify-center px-4 md:flex">
-						<Suspense
-							fallback={
-								<div className="relative h-10 w-full animate-pulse rounded-full bg-muted" />
-							}
+					<div className="flex items-center gap-2">
+						<Button
+							variant="ghost"
+							className="md:hidden"
+							size="icon"
+							onClick={() => setIsMenuOpen(!isMenuOpen)}
 						>
-							<SearchForm />
-						</Suspense>
+							{isMenuOpen ? (
+								<X className="h-6 w-6" />
+							) : (
+								<Menu className="h-6 w-6" />
+							)}
+						</Button>
+
+						<Logo />
 					</div>
 
-					<div className="hidden items-center gap-4 md:flex">
-						<Link href="/about" className="font-medium text-sm">
-							About
-						</Link>
-						<Link href="/resources" className="font-medium text-sm">
-							Resources
-						</Link>
-
-						{/**
-						 * # TODO: Uncomment this when the contribute page is ready
-						 */}
-						{/* <Link
-                            href="/contribute"
-                            className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm"
-                        >
-                            Contribute
-                        </Link> */}
-						<ThemeToggle />
+					<div className="flex items-center gap-2">
+						<div className="hidden items-center gap-4 md:flex">
+							<div className="flex items-center gap-2">
+								<Link href="/about">
+									<Button
+										variant={pathname === "/about" ? "secondary" : "ghost"}
+										className="rounded-md px-3 py-2 text-sm"
+									>
+										About
+									</Button>
+								</Link>
+								<Link href="/resources">
+									<Button
+										variant={pathname === "/resources" ? "secondary" : "ghost"}
+										className="rounded-md px-3 py-2 text-sm"
+									>
+										Resources
+									</Button>
+								</Link>
+							</div>
+							<ThemeToggle />
+						</div>
 					</div>
-					<Button
-						variant="ghost"
-						className="md:hidden"
-						size="icon"
-						onClick={() => setIsMenuOpen(!isMenuOpen)}
-					>
-						{isMenuOpen ? (
-							<X className="h-6 w-6" />
-						) : (
-							<Menu className="h-6 w-6" />
-						)}
-					</Button>
 				</div>
 			</div>
 
-			<div
-				className={cn("px-3 pb-3 md:hidden", isMenuOpen ? "block" : "hidden")}
-			>
-				<Suspense
-					fallback={
-						<div className="relative h-10 w-full animate-pulse rounded-full bg-muted" />
-					}
-				>
-					<SearchForm />
-				</Suspense>
+			{/* Mobile Search */}
+			<div className={`pb-3 ${isMenuOpen ? "block" : "hidden"} md:hidden`}>
+				<div className="container mx-auto px-4">
+					<Suspense
+						fallback={
+							<div className="h-9 w-full animate-pulse rounded-full bg-accent" />
+						}
+					>
+						<SearchForm onSearch={handleSearch} />
+					</Suspense>
+				</div>
 			</div>
 
+			{/* Mobile Categories Menu */}
 			<div
-				className={cn(
-					"space-y-2 px-4 pb-3 md:hidden",
-					isMenuOpen ? "block" : "hidden",
-				)}
+				className={`space-y-2 pb-3 ${isMenuOpen ? "block" : "hidden"} md:hidden`}
 			>
-				<div className="container mx-auto space-y-1">
-					<Link
-						href="/about"
-						className="block rounded-md px-3 py-2 hover:bg-accent"
-						onClick={() => setIsMenuOpen(false)}
-					>
-						About
-					</Link>
-					<Link
-						href="/resources"
-						className="block rounded-md px-3 py-2 hover:bg-accent"
-						onClick={() => setIsMenuOpen(false)}
-					>
-						Resources
-					</Link>
+				<div className="container mx-auto space-y-1 px-4">
+					<h3 className="px-3 py-2 font-medium text-sm">Categories</h3>
+					{CATEGORIES.map((category) => (
+						<Button
+							key={category.id}
+							variant={activeCategory === category.id ? "secondary" : "ghost"}
+							className="w-full justify-start text-sm"
+							onClick={() => handleCategoryChange(category.id)}
+						>
+							<span className="mr-2">
+								{category.icon && <category.icon size={18} />}
+							</span>
+							<span className="capitalize">{category.name}</span>
+						</Button>
+					))}
 
-					{/**
-					 * # TODO: Uncomment this when the contribute page is ready
-					 */}
-					{/* <Link
-                        href="/contribute"
-                        className="block rounded-md bg-primary px-3 py-2 text-primary-foreground"
-                        onClick={() => setIsMenuOpen(false)}
-                    >
-                        Contribute
-                    </Link> */}
-					<div className="flex items-center justify-between px-3 py-2">
-						<span className="text-sm">Toggle theme</span>
-						<ThemeToggle />
+					<div className="mt-4 border-t pt-4">
+						<Link
+							href="/about"
+							className="block rounded-md px-3 py-2 hover:bg-accent"
+							onClick={() => setIsMenuOpen(false)}
+						>
+							About
+						</Link>
+						<Link
+							href="/resources"
+							className="block rounded-md px-3 py-2 hover:bg-accent"
+							onClick={() => setIsMenuOpen(false)}
+						>
+							Resources
+						</Link>
+						<Link
+							href="/contribute"
+							className="block rounded-md bg-primary px-3 py-2 text-primary-foreground"
+							onClick={() => setIsMenuOpen(false)}
+						>
+							Contribute
+						</Link>
 					</div>
 				</div>
 			</div>

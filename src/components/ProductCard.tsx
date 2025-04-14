@@ -2,6 +2,7 @@
 
 import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
+import type { IProductSection } from "~/lib/data";
 import { cn } from "~/lib/utils";
 
 interface ProductCardProps {
@@ -9,7 +10,7 @@ interface ProductCardProps {
 	company: string;
 	imageUrl: string;
 	category: string;
-	isBoycott: boolean;
+	isBoycott?: boolean;
 	alternativeId?: string;
 }
 export function ProductCard({
@@ -17,23 +18,25 @@ export function ProductCard({
 	company,
 	imageUrl,
 	category,
-	isBoycott,
+	isBoycott = false,
 	alternativeId,
 }: ProductCardProps) {
 	return (
 		<div
 			className={cn(
-				"card-glow group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition-all",
+				"card-glow group flex h-full flex-col overflow-hidden rounded-t-xl border bg-card transition-all",
 				isBoycott ? "border-destructive/20" : "border-green-500/20",
 			)}
 		>
 			<div className="relative aspect-square w-full overflow-hidden">
 				<Image
-					src={imageUrl}
+					src={`https://boycott-israel.org/${imageUrl}`}
 					alt={name}
+					className={cn(
+						"h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110",
+						isBoycott ? "bg-red-300" : "bg-green-300",
+					)}
 					fill
-					className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
-					sizes="(max-width: 768px) 50vw, 33vw"
 					priority={false}
 				/>
 				<div
@@ -55,7 +58,9 @@ export function ProductCard({
 			<div
 				className={cn(
 					"flex flex-grow flex-col p-4",
-					isBoycott ? "text-destructive" : "text-green-600",
+					isBoycott
+						? "bg-destructive/10 text-destructive"
+						: "bg-green-500/10 text-green-600",
 				)}
 			>
 				<h3 className="line-clamp-1 font-semibold" title={name}>
@@ -69,54 +74,53 @@ export function ProductCard({
 	);
 }
 
-interface ProductPairProps {
-	boycottProduct: {
-		id: string;
-		name: string;
-		company: string;
-		imageUrl: string;
-		category: string;
-	};
-	alternativeProduct: {
-		id: string;
-		name: string;
-		company: string;
-		imageUrl: string;
-		category: string;
-	};
-}
+interface ProductSectionProps extends IProductSection {}
 
-export function ProductPair({
-	boycottProduct,
-	alternativeProduct,
-}: ProductPairProps) {
+export function ProductSection({
+	boycottProducts,
+	alternativeProducts,
+	category,
+}: ProductSectionProps) {
 	return (
 		<div className="flex flex-col overflow-hidden rounded-xl border border-border/40 bg-card shadow-sm transition-all duration-300 hover:shadow-md">
-			<div className="grid grid-cols-2 gap-0">
-				<ProductCard
-					name={boycottProduct.name}
-					company={boycottProduct.company}
-					imageUrl={boycottProduct.imageUrl}
-					category={boycottProduct.category}
-					isBoycott={true}
-					alternativeId={alternativeProduct.id}
-				/>
-				<ProductCard
-					name={alternativeProduct.name}
-					company={alternativeProduct.company}
-					imageUrl={alternativeProduct.imageUrl}
-					category={alternativeProduct.category}
-					isBoycott={false}
-				/>
-			</div>
-			<div className="flex items-center justify-between bg-muted/40 p-3 text-sm">
-				<div className="flex items-center text-muted-foreground text-xs">
-					<span className="mr-2 capitalize">{boycottProduct.category}</span>•
-					<span className="ml-2">Ethical alternative</span>
+			<div className="flex items-center justify-between bg-muted/10 p-4 backdrop-blur-sm">
+				<div className="flex items-center gap-2 text-muted-foreground text-xs">
+					<span className="rounded-md bg-primary/10 px-2 py-1 font-medium text-primary capitalize">
+						{category}
+					</span>
+					<span className="text-xs">Ethical alternatives</span>
 				</div>
-				<div className="flex items-center font-medium text-primary text-xs">
-					More details
-					<ArrowRightIcon className="ml-1 h-3 w-3" />
+			</div>
+
+			{/* Combined Grid with Breakpoints */}
+			<div className="grid grid-cols-4 md:grid-cols-8">
+				{/* Boycott Products - 2 cols on mobile, 4 cols on desktop */}
+				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
+					{boycottProducts.slice(0, 4).map((product, idx) => (
+						<ProductCard
+							key={product.id}
+							name={product.name}
+							company={product.company}
+							imageUrl={product.imageUrl}
+							category={product.category}
+							isBoycott={true}
+							alternativeId={alternativeProducts[idx]?.id}
+						/>
+					))}
+				</div>
+
+				{/* Alternative Products - 2 cols on mobile, 4 cols on desktop */}
+				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
+					{alternativeProducts.slice(0, 4).map((product) => (
+						<ProductCard
+							key={product.id}
+							name={product.name}
+							company={product.company}
+							imageUrl={product.imageUrl}
+							category={product.category}
+							isBoycott={false}
+						/>
+					))}
 				</div>
 			</div>
 		</div>

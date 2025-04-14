@@ -10,10 +10,9 @@ const config = {
 		remotePatterns: [
 			{
 				protocol: "https",
-				hostname: "images.unsplash.com",
+				hostname: "boycott-israel.org",
 			},
 		],
-		dangerouslyAllowSVG: true,
 	},
 };
 
