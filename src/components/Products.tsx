@@ -41,7 +41,7 @@ function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
 	);
 }
 
-export default function Products() {
+function ProductsContent() {
 	const searchParams = useSearchParams();
 	const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
 	const [category, setCategory] = useState(searchParams.get("category") || "");
@@ -70,6 +70,23 @@ export default function Products() {
 		url.searchParams.delete("q");
 		url.searchParams.delete("category");
 		window.history.pushState({}, "", url);
+	};
+
+	// Handle category selection
+	const handleCategorySelect = (selectedCategory: string) => {
+		if (category === selectedCategory) {
+			// If clicking on already selected category, clear it
+			setCategory("");
+			const url = new URL(window.location.href);
+			url.searchParams.delete("category");
+			window.history.pushState({}, "", url);
+		} else {
+			// Set new category
+			setCategory(selectedCategory);
+			const url = new URL(window.location.href);
+			url.searchParams.set("category", selectedCategory);
+			window.history.pushState({}, "", url);
+		}
 	};
 
 	// Update local state when URL params change
@@ -131,85 +148,91 @@ export default function Products() {
 	const hasProducts = filteredSections.length > 0;
 
 	return (
-		<Suspense fallback={<div>Loading...</div>}>
-			<section className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-6 md:py-12">
-				<div className="container mx-auto px-4 md:px-0">
-					{/* Sticky Search Bar (only for mobile - desktop has search in navbar) */}
-					<div className="">
+		<>
+			<div className="container mx-auto px-4 md:px-0">
+				<div className="md:flex md:items-center md:justify-between md:gap-4">
+					<div className="w-full">
 						<SearchBar onSearch={handleSearch} />
 					</div>
+				</div>
 
-					{/* Search Status and Filters */}
-					{(searchQuery || category) && (
-						<div className="mt-4 mb-6 flex items-center justify-between">
-							<div>
-								<p className="text-sm">
-									{searchQuery ? (
-										<span>
-											Results for "<strong>{searchQuery}</strong>"
-											{category && (
-												<span>
-													{" "}
-													in <strong className="capitalize">{category}</strong>
-												</span>
-											)}
-										</span>
-									) : category ? (
-										<span>
-											Showing <strong className="capitalize">{category}</strong>
-										</span>
-									) : null}
-								</p>
-							</div>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={clearFilters}
-								className="text-xs"
-							>
+				{/* Search Status and Filters */}
+				{(searchQuery || category) && (
+					<div className="mt-4 mb-6 flex items-center justify-between">
+						<div>
+							<p className="text-sm">
+								{searchQuery ? (
+									<span>
+										Results for "<strong>{searchQuery}</strong>"
+										{category && (
+											<span>
+												{" "}
+												in <strong className="capitalize">{category}</strong>
+											</span>
+										)}
+									</span>
+								) : category ? (
+									<span>
+										Showing <strong className="capitalize">{category}</strong>
+									</span>
+								) : null}
+							</p>
+						</div>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={clearFilters}
+							className="text-xs"
+						>
+							Clear filters
+						</Button>
+					</div>
+				)}
+
+				<div className="mt-4 mb-6 space-y-6">
+					{hasProducts ? (
+						<>
+							{/* Display filtered sections */}
+							{filteredSections.map((section) => (
+								<div
+									key={section.category}
+									id={section.category}
+									className="scroll-mt-20"
+								>
+									<div className="grid grid-cols-1 gap-6">
+										<ProductSection
+											category={section.category}
+											boycottProducts={section.boycottProducts}
+											alternativeProducts={section.alternativeProducts}
+										/>
+									</div>
+								</div>
+							))}
+						</>
+					) : (
+						<div className="flex flex-col items-center justify-center py-16 text-center">
+							<p className="mb-2 font-medium text-xl">No products found</p>
+							<p className="text-muted-foreground">
+								Try searching for a different product name or category.
+							</p>
+							<Button variant="outline" className="mt-4" onClick={clearFilters}>
 								Clear filters
 							</Button>
 						</div>
 					)}
-
-					<div className="mt-4 mb-6 space-y-6">
-						{hasProducts ? (
-							<>
-								{/* Display filtered sections */}
-								{filteredSections.map((section) => (
-									<div
-										key={section.category}
-										id={section.category}
-										className="scroll-mt-20"
-									>
-										<div className="grid grid-cols-1 gap-6">
-											<ProductSection
-												category={section.category}
-												boycottProducts={section.boycottProducts}
-												alternativeProducts={section.alternativeProducts}
-											/>
-										</div>
-									</div>
-								))}
-							</>
-						) : (
-							<div className="flex flex-col items-center justify-center py-16 text-center">
-								<p className="mb-2 font-medium text-xl">No products found</p>
-								<p className="text-muted-foreground">
-									Try searching for a different product name or category.
-								</p>
-								<Button
-									variant="outline"
-									className="mt-4"
-									onClick={clearFilters}
-								>
-									Clear filters
-								</Button>
-							</div>
-						)}
-					</div>
 				</div>
-			</section>
-		</Suspense>
+			</div>
+		</>
+	);
+}
+
+// Main component with Suspense boundary
+export default function Products() {
+	return (
+		<section className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-6 md:py-12">
+			<Suspense fallback={<div>Loading products...</div>}>
+				<ProductsContent />
+			</Suspense>
+		</section>
 	);
 }

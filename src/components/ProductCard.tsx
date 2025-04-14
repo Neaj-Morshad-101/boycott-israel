@@ -102,7 +102,7 @@ export function ProductSection({
 							name={product.name}
 							company={product.company}
 							imageUrl={product.imageUrl}
-							category={product.category}
+							category={category}
 							isBoycott={true}
 							alternativeId={alternativeProducts[idx]?.id}
 						/>
@@ -117,7 +117,7 @@ export function ProductSection({
 							name={product.name}
 							company={product.company}
 							imageUrl={product.imageUrl}
-							category={product.category}
+							category={category}
 							isBoycott={false}
 						/>
 					))}

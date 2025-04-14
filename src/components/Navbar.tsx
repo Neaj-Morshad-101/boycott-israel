@@ -191,13 +191,6 @@ export function Navbar() {
 						>
 							Resources
 						</Link>
-						<Link
-							href="/contribute"
-							className="block rounded-md bg-primary px-3 py-2 text-primary-foreground"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Contribute
-						</Link>
 					</div>
 				</div>
 			</div>
