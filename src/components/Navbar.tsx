@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { CATEGORIES } from "~/lib/data";
@@ -85,17 +85,6 @@ export function Navbar() {
 		setIsMenuOpen(false);
 	};
 
-	// Handle search submission
-	const handleSearch = (query: string) => {
-		const url = new URL(window.location.href);
-		if (query) {
-			url.searchParams.set("q", query);
-		} else {
-			url.searchParams.delete("q");
-		}
-		router.push(url.toString().replace(window.location.origin, ""));
-	};
-
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/50 backdrop-blur">
 			<div className="container mx-auto flex h-16 items-center px-4 md:px-0">
@@ -140,19 +129,6 @@ export function Navbar() {
 							<ThemeToggle />
 						</div>
 					</div>
-				</div>
-			</div>
-
-			{/* Mobile Search */}
-			<div className={`pb-3 ${isMenuOpen ? "block" : "hidden"} md:hidden`}>
-				<div className="container mx-auto px-4">
-					<Suspense
-						fallback={
-							<div className="h-9 w-full animate-pulse rounded-full bg-accent" />
-						}
-					>
-						<SearchForm onSearch={handleSearch} />
-					</Suspense>
 				</div>
 			</div>
 
