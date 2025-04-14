@@ -96,9 +96,9 @@ export function ProductSection({
 			</div>
 
 			{/* Combined Grid with Breakpoints */}
-			<div className="grid grid-cols-4 md:grid-cols-8">
+			<div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
 				{/* Boycott Products - 2 cols on mobile, 4 cols on desktop */}
-				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
+				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4 lg:col-span-5 lg:grid-cols-5">
 					{boycottProducts.map((product, idx) => (
 						<ProductCard
 							key={product.id}
@@ -113,7 +113,7 @@ export function ProductSection({
 				</div>
 
 				{/* Alternative Products - 2 cols on mobile, 4 cols on desktop */}
-				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
+				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4 lg:col-span-5 lg:grid-cols-5">
 					{alternativeProducts.map((product) => (
 						<ProductCard
 							key={product.id}
