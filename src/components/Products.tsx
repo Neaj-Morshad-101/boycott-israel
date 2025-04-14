@@ -189,7 +189,7 @@ function ProductsContent() {
 					</div>
 				)}
 
-				<div className="mt-4 mb-6 space-y-6">
+				<div className="mt-4 mb-6 space-y-16">
 					{hasProducts ? (
 						<>
 							{/* Display filtered sections */}

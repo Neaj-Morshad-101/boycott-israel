@@ -33,7 +33,7 @@ export function ProductCard({
 					alt={name}
 					className={cn(
 						"h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-110",
-						isBoycott ? "bg-red-300" : "bg-green-300",
+						isBoycott ? "bg-red-50" : "bg-green-50",
 					)}
 					fill
 					priority={false}
@@ -99,7 +99,7 @@ export function ProductSection({
 			<div className="grid grid-cols-4 md:grid-cols-8">
 				{/* Boycott Products - 2 cols on mobile, 4 cols on desktop */}
 				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
-					{boycottProducts.slice(0, 4).map((product, idx) => (
+					{boycottProducts.map((product, idx) => (
 						<ProductCard
 							key={product.id}
 							name={product.name}
@@ -114,7 +114,7 @@ export function ProductSection({
 
 				{/* Alternative Products - 2 cols on mobile, 4 cols on desktop */}
 				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4">
-					{alternativeProducts.slice(0, 4).map((product) => (
+					{alternativeProducts.map((product) => (
 						<ProductCard
 							key={product.id}
 							name={product.name}
