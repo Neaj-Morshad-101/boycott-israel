@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import type { IProductSection } from "~/lib/data";
 import { cn } from "~/lib/utils";
@@ -88,7 +87,11 @@ export function ProductSection({
 					<span className="rounded-md bg-primary/10 px-2 py-1 font-medium text-primary capitalize">
 						{category}
 					</span>
-					<span className="text-xs">Ethical alternatives</span>
+					{boycottProducts.length > 0 && (
+						<span className="ml-auto text-destructive text-xs">
+							{boycottProducts.length} products to boycott
+						</span>
+					)}
 				</div>
 			</div>
 

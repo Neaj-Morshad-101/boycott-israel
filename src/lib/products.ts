@@ -1053,4 +1053,4 @@ export const CATEGORIZED_PRODUCT_PAIRS = {
 			},
 		},
 	],
-};
+} as const;
