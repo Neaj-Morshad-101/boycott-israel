@@ -3,54 +3,42 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { CATEGORIES } from "~/lib/data";
 import Logo from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
-// Search form component
-function SearchForm({ onSearch }: { onSearch?: (query: string) => void }) {
-	const searchParams = useSearchParams();
-	const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
-	const router = useRouter();
-
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		const trimmedInput = searchInput.trim();
-
-		if (onSearch) {
-			onSearch(trimmedInput);
-		} else {
-			// Default behavior if no onSearch provided
-			if (trimmedInput) {
-				router.push(`/?q=${encodeURIComponent(trimmedInput)}`);
-			}
-		}
-	};
-
+// Create a separate component for category handling that uses searchParams
+function CategoryHandler({
+	onCategoryChange,
+	activeCategory,
+}: {
+	onCategoryChange: (category: string) => void;
+	activeCategory: string;
+}) {
 	return (
-		<form className="relative w-full" onSubmit={handleSubmit}>
-			<Input
-				type="search"
-				placeholder="Search products..."
-				className="w-full rounded-full pr-10"
-				value={searchInput}
-				onChange={(e) => setSearchInput(e.target.value)}
-			/>
-			<Button
-				type="submit"
-				size="sm"
-				className="-translate-y-1/2 absolute top-1/2 right-1 h-8 transform rounded-full"
-			>
-				Search
-			</Button>
-		</form>
+		<>
+			<h3 className="px-3 py-2 font-medium text-sm">Categories</h3>
+			{CATEGORIES.map((category) => (
+				<Button
+					key={category.id}
+					variant={activeCategory === category.id ? "secondary" : "ghost"}
+					className="w-full justify-start text-sm"
+					onClick={() => onCategoryChange(category.id)}
+				>
+					<span className="mr-2">
+						{category.icon && <category.icon size={18} />}
+					</span>
+					<span className="capitalize">{category.name}</span>
+				</Button>
+			))}
+		</>
 	);
 }
 
-export function Navbar() {
+// Component that uses searchParams
+function NavbarContent() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const searchParams = useSearchParams();
 	const [activeCategory, setActiveCategory] = useState(
@@ -86,7 +74,7 @@ export function Navbar() {
 	};
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b bg-background/50 backdrop-blur">
+		<>
 			<div className="container mx-auto flex h-16 items-center px-4 md:px-0">
 				<div className="flex w-full justify-between gap-2 md:gap-10">
 					<div className="flex items-center gap-2">
@@ -137,20 +125,10 @@ export function Navbar() {
 				className={`space-y-2 pb-3 ${isMenuOpen ? "block" : "hidden"} md:hidden`}
 			>
 				<div className="container mx-auto space-y-1 px-4">
-					<h3 className="px-3 py-2 font-medium text-sm">Categories</h3>
-					{CATEGORIES.map((category) => (
-						<Button
-							key={category.id}
-							variant={activeCategory === category.id ? "secondary" : "ghost"}
-							className="w-full justify-start text-sm"
-							onClick={() => handleCategoryChange(category.id)}
-						>
-							<span className="mr-2">
-								{category.icon && <category.icon size={18} />}
-							</span>
-							<span className="capitalize">{category.name}</span>
-						</Button>
-					))}
+					<CategoryHandler
+						activeCategory={activeCategory}
+						onCategoryChange={handleCategoryChange}
+					/>
 
 					<div className="mt-4 border-t pt-4">
 						<Link
@@ -170,6 +148,27 @@ export function Navbar() {
 					</div>
 				</div>
 			</div>
+		</>
+	);
+}
+
+// Main Navbar component with Suspense boundary
+export function Navbar() {
+	return (
+		<header className="sticky top-0 z-50 w-full border-b bg-background/50 backdrop-blur">
+			<Suspense
+				fallback={
+					<div className="container mx-auto flex h-16 items-center justify-between px-4">
+						<div className="flex items-center gap-2">
+							<div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
+							<div className="h-6 w-24 animate-pulse rounded bg-muted" />
+						</div>
+						<div className="h-9 w-24 animate-pulse rounded bg-muted" />
+					</div>
+				}
+			>
+				<NavbarContent />
+			</Suspense>
 		</header>
 	);
 }
