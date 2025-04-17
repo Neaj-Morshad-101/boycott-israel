@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { type IProductSection, PRODUCT_SECTIONS } from "~/lib/data";
-import { ProductSection } from "./ProductSection";
+import { CategorySection } from "./CategorySection";
 
 function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
 	const searchParams = useSearchParams();
@@ -200,7 +200,7 @@ function ProductsContent() {
 									className="scroll-mt-20"
 								>
 									<div className="grid grid-cols-1 gap-6">
-										<ProductSection
+										<CategorySection
 											category={section.category}
 											boycottProducts={section.boycottProducts}
 											alternativeProducts={section.alternativeProducts}

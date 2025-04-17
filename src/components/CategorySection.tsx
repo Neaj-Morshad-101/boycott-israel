@@ -3,7 +3,7 @@ import { ProductCard } from "./ProductCard";
 
 interface ProductSectionProps extends IProductSection {}
 
-export function ProductSection({
+export function CategorySection({
 	boycottProducts,
 	alternativeProducts,
 	category,
@@ -19,31 +19,28 @@ export function ProductSection({
 			</div>
 
 			{/* Combined Grid with Breakpoints */}
-			<div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
+			<div className="grid grid-cols-4 gap-1 md:grid-cols-8 md:gap-4">
 				{/* Boycott Products - 2 cols on mobile, 4 cols on desktop */}
-				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4 lg:col-span-5 lg:grid-cols-5">
+				<div className="col-span-2 grid grid-cols-2 gap-0.5 md:col-span-4 md:grid-cols-4 md:gap-2">
 					{boycottProducts.map((product, idx) => (
 						<ProductCard
 							key={product.id}
 							name={product.name}
 							company={product.company}
 							imageUrl={product.imageUrl}
-							category={category}
 							isBoycott={true}
-							alternativeId={alternativeProducts[idx]?.id}
 						/>
 					))}
 				</div>
 
 				{/* Alternative Products - 2 cols on mobile, 4 cols on desktop */}
-				<div className="col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4 lg:col-span-5 lg:grid-cols-5">
+				<div className="col-span-2 grid grid-cols-2 gap-0.5 md:col-span-4 md:grid-cols-4 md:gap-2">
 					{alternativeProducts.map((product) => (
 						<ProductCard
 							key={product.id}
 							name={product.name}
 							company={product.company}
 							imageUrl={product.imageUrl}
-							category={category}
 							isBoycott={false}
 						/>
 					))}

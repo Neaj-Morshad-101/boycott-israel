@@ -7,23 +7,19 @@ interface ProductCardProps {
 	name: string;
 	company: string;
 	imageUrl: string;
-	category: string;
 	isBoycott?: boolean;
-	alternativeId?: string;
 }
 export function ProductCard({
 	name,
 	company,
 	imageUrl,
-	category,
 	isBoycott = false,
-	alternativeId,
 }: ProductCardProps) {
 	return (
 		<div
 			className={cn(
 				"card-glow group flex h-full flex-col overflow-hidden rounded-t-xl border bg-card transition-all",
-				isBoycott ? "border-destructive/20" : "border-green-500/20",
+				isBoycott ? "border-destructive/10" : "border-green-500/10",
 			)}
 		>
 			<div className="relative aspect-square w-full overflow-hidden">
@@ -44,8 +40,8 @@ export function ProductCard({
 				/>
 				<div
 					className={cn(
-						"absolute top-2 z-10 font-medium text-xs",
-						isBoycott ? "left-2 bg-destructive" : "right-2 bg-green-500",
+						"-rotate-45 absolute top-4 z-10 font-bold text-xs ",
+						isBoycott ? "text-destructive" : "text-green-600",
 					)}
 				>
 					{isBoycott ? "Boycott" : "Use"}
@@ -53,10 +49,8 @@ export function ProductCard({
 			</div>
 			<div
 				className={cn(
-					"flex flex-grow flex-col p-4",
-					isBoycott
-						? "bg-destructive/10 text-destructive"
-						: "bg-green-500/10 text-green-600",
+					"flex flex-grow flex-col px-4 py-2 leading-none tracking-tight",
+					isBoycott ? "bg-destructive/10" : "bg-green-600/10",
 				)}
 			>
 				<h3 className="line-clamp-1 font-semibold" title={name}>

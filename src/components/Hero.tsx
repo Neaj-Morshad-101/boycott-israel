@@ -1,4 +1,4 @@
-import { Link } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
 
@@ -25,9 +25,9 @@ export default function Hero() {
 						alternatives.
 					</p>
 					<div className="flex flex-col justify-center gap-3 sm:flex-row">
-						<Link href="#products">
+						<a href="#products">
 							<Button className="h-12 px-8">Find Alternatives</Button>
-						</Link>
+						</a>
 						<Link href="/why-boycott">
 							<Button variant="outline" className="h-12 px-8">
 								Learn More
