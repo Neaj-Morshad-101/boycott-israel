@@ -1,6 +1,6 @@
-# Boycott Israel Website
+# Boycott Israel From BD Website
 
-This repository contains the source code and data for the "Boycott Israel" website, designed to inform users about products and services to boycott and suggest ethical alternatives.
+This repository contains the source code and data for the "Boycott Israel From BD" website, designed to inform users about products and services to boycott and suggest ethical alternatives.
 
 Boycott Brands/Products/Services   
 https://boycott-israel.org/   
@@ -9,96 +9,131 @@ https://bdsmovement.net/Guide-to-BDS-Boycott
 
 ## Table of Contents
 
-- [Project Structure](#project-structure)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Data Management](#data-management)
-- [Hosting](#hosting)
-- [Contributing](#contributing)
-- [License](#license)
+- [Boycott Israel From BD Website](#boycott-israel-from-bd-website)
+  - [Table of Contents](#table-of-contents)
+  - [Project Structure](#project-structure)
+  - [Features](#features)
+  - [Technologies Used](#technologies-used)
+  - [Data Management](#data-management)
+  - [Installation \& Development](#installation--development)
+  - [Deployment](#deployment)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Project Structure
 
-- **index.html**: Main page displaying the boycott list and search functionality.
-- **why-boycott.html**: Page explaining the reasons and motivations behind the boycott.
-- **about-us.html**: Information about the creators and mission of the website.
-- **assets/**: Contains stylesheets, JavaScript files, and data.
-  - **css/style.css**: Main stylesheet for the website.
-  - **js/script.js**: JavaScript functionalities.
-  - **data/boycott-data.json**: JSON file containing boycott data.
-- **images/**: Directory for images and videos used on the site.
-- **ads/**: (Optional) Directory for advertisements.
+- **src/**: Main source directory
+  - **app/**: Next.js app directory containing pages and routing
+  - **components/**: React components
+    - **ui/**: UI components (buttons, cards, etc.)
+  - **styles/**: CSS styles
+  - **lib/**: Utility functions and data
+  - **content/**: Markdown content
+  - **hooks/**: Custom React hooks
 
 ## Features
 
-- **Navigation Links**: Easy access to "Boycott Israel" (Main Page), "Why Boycott", and "About Us".
-- **Search Functionality**: Allows users to search for specific brands, products, or services to boycott and find ethical alternatives.
-- **Boycott List**: A comprehensive, category-wise list of products with suggested alternatives. The List can be Downloaded to PDF format. 
-- **Download Option**: Users can download the list of 100 products to boycott along with their alternatives.
-
-Main Page contains Title, Motto with Images, Videos, Ads, etc. 
+- **Modern UI/UX**: Responsive design with light/dark mode support
+- **Navigation**: Easy access to "Home", "About", and "Resources" pages
+- **Search Functionality**: Allows users to search for specific brands, products, or services to boycott
+- **Category Filtering**: Filter products by category for easier browsing
+- **Product Comparison**: Side-by-side comparison of products to boycott and their ethical alternatives
+- **Mobile Responsiveness**: Fully responsive design for all screen sizes
 
 ## Technologies Used
 
 - **Frontend**:
-  - HTML
-  - CSS (BootStap 5 or Tailwind CSS for responsive design)
-  - JavaScript
-  - React.js for dynamic UI components
-- **Backend**:
-  - Node.js
-  - Firebase for real-time data storage and authentication
+  - [Next.js 15](https://nextjs.org/): React framework for production
+  - [TypeScript](https://www.typescriptlang.org/): Type-safe JavaScript
+  - [Tailwind CSS 4](https://tailwindcss.com/): Utility-first CSS framework
+  - [React 19](https://react.dev/): UI component library
+- **UI Components**:
+  - Custom UI components with Radix UI primitives
+  - Lucide React for icons
+  - Next Themes for theme switching
+- **Content Management**:
+  - MDX for markdown content with component support
+- **Development Tools**:
+  - Biome for linting and formatting
+  - NuQs for URL state management
 
 ## Data Management
 
-The boycott data is stored in a JSON file located at `assets/data/boycott-data.json`. This structure allows for easy updates and integration with the frontend.
+The boycott data is structured in the `src/lib/products.ts` file, organizing products by categories with both boycott targets and ethical alternatives.
 
-**Example Structure**:
+**Data Structure**:
 
-```json
-[
-  {
-    "category": "Beverages",
-    "products": [
-      {
-        "name": "Coca-Cola",
-        "alternative": "Cola Gaza"
+```typescript
+{
+  "Technology and Computers": [
+    {
+      boycottProduct: {
+        id: "apple",
+        name: "Apple",
+        company: "Apple Inc.",
+        imageUrl: "img/logos/apple.png"
       },
-      {
-        "name": "Pepsi",
-        "alternative": "Mecca Cola"
+      alternativeProduct: {
+        id: "samsung",
+        name: "Samsung",
+        company: "Samsung Electronics",
+        imageUrl: "img/logos/samsung.png"
       }
-    ]
-  },
-  {
-    "category": "Cosmetics",
-    "products": [
-      {
-        "name": "Ahava",
-        "alternative": "Lush"
-      }
-    ]
-  }
-]
+    },
+    // More products...
+  ],
+  // More categories...
+}
 ```
 
-### Tools & Libraries: 
-Bootstrap 5: Prebuilt responsive components (getbootstrap.com).   
-PapaParse: JSON-to-CSV conversion (papaparse.com).   
-Netlify: Free hosting + continuous deployment (netlify.com).   
-Google Sheets: Manage boycott data in a spreadsheet, then export to JSON (easier than manual editing).   
+## Installation & Development
 
-### Data sourced from: 
-Ethical Consumer, Boycott Israeli Consumer Goods Dataset, etc.
+1. **Clone the repository**
 
-## Hosting:    
-The website can be hosted on:   
-Netlify: Free, fast, and easy for static sites with continuous deployment.   
-Vercel: Ideal for React-based sites with serverless functions support.   
-GitHub Pages: Suitable for hosting static websites directly from the repository.   
+```bash
+git clone https://github.com/yourusername/boycott-israel.git
+cd boycott-israel
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Run the development server**
+
+```bash
+npm run dev
+```
+
+4. **Open your browser**
+
+Visit [http://localhost:3000](http://localhost:3000) to see the application.
+
+## Deployment
+
+The application can be deployed to various platforms:
+
+- **Vercel**: Recommended for Next.js applications
+- **Netlify**: Easy deployment with continuous integration
+- **Self-hosted**: Build the application and serve the static files
+
+To build the application:
+
+```bash
+npm run build
+```
 
 ## Contributing
+
 We welcome contributions to enhance the website's functionality and data accuracy. Please fork the repository and submit a pull request with your changes.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License   
 This project is licensed under the MIT License.
