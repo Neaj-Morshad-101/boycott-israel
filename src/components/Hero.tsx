@@ -1,4 +1,6 @@
+import { Link } from "lucide-react";
 import React from "react";
+import { Button } from "./ui/button";
 
 export default function Hero() {
 	return (
@@ -22,14 +24,16 @@ export default function Hero() {
 						choices. Discover which products fund occupation and find ethical
 						alternatives.
 					</p>
-					{/* <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                <Button className="h-12 px-8" size="lg">
-                    Find Alternatives
-                </Button>
-                <Button variant="outline" className="h-12 px-8" size="lg">
-                    Learn More
-                </Button>
-            </div> */}
+					<div className="flex flex-col justify-center gap-3 sm:flex-row">
+						<Link href="#products">
+							<Button className="h-12 px-8">Find Alternatives</Button>
+						</Link>
+						<Link href="/why-boycott">
+							<Button variant="outline" className="h-12 px-8">
+								Learn More
+							</Button>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</section>

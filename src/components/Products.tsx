@@ -3,10 +3,10 @@
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { ProductSection } from "~/components/ProductCard";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { type IProductSection, PRODUCT_SECTIONS } from "~/lib/data";
+import { ProductSection } from "./ProductSection";
 
 function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
 	const searchParams = useSearchParams();
@@ -229,7 +229,10 @@ function ProductsContent() {
 // Main component with Suspense boundary
 export default function Products() {
 	return (
-		<section className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-6 md:py-12">
+		<section
+			id="products"
+			className="relative bg-gradient-to-b from-background to-[#E4312b]/5 py-6 md:py-12"
+		>
 			<Suspense fallback={<div>Loading products...</div>}>
 				<ProductsContent />
 			</Suspense>

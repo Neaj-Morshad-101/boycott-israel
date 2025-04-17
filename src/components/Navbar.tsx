@@ -105,12 +105,14 @@ function NavbarContent() {
 										About
 									</Button>
 								</Link>
-								<Link href="/resources">
+								<Link href="/why-boycott">
 									<Button
-										variant={pathname === "/resources" ? "secondary" : "ghost"}
+										variant={
+											pathname === "/why-boycott" ? "secondary" : "ghost"
+										}
 										className="rounded-md px-3 py-2 text-sm"
 									>
-										Resources
+										Why Boycott?
 									</Button>
 								</Link>
 							</div>
@@ -139,11 +141,11 @@ function NavbarContent() {
 							About
 						</Link>
 						<Link
-							href="/resources"
+							href="/why-boycott"
 							className="block rounded-md px-3 py-2 hover:bg-accent"
 							onClick={() => setIsMenuOpen(false)}
 						>
-							Resources
+							Why Boycott?
 						</Link>
 					</div>
 				</div>
